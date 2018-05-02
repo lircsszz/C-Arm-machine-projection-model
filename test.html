@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Cam-Points</title>
+        <script src="js/three.js"></script>
+        <script src="js/stats.min.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/dat.gui.js"></script>
+        <style type="text/css">
+            div#canvas-frame{
+                border: none;
+                cursor: pointer;
+                width: 100%;
+                height: 900px;
+                background: black;
+            }
+        </style>
+        <script>
+            var renderer;
+            var stats;
+            function initThree() {
+                width=document.getElementById('canvas-frame').clientWidth;
+                height=document.getElementById('canvas-frame').clientHeight;
+                renderer=new THREE.WebGLRenderer({antialias:true});
+                renderer.setSize(width,height);
+                document.getElementById('canvas-frame').appendChild(renderer.domElement);
+                renderer.setClearColor(0x000000,1.0);
+                renderer.shadowMapEnabled=true;
+                stats=new Stats();
+                stats.domElement.style.position='absolute';
+                stats.domElement.style.left='0px';
+                stats.domElement.style.top='5px';
+                document.getElementById('canvas-frame').appendChild(stats.domElement);
+            }
+
+            var scene=new THREE.Scene();
+
+
+
+
+
+            var camera;
+            function initCamera() {
+                camera=new THREE.PerspectiveCamera(50,width/height,1,10000);
+                camera.position.set(500,800,2000);
+                camera.lookAt(0,0,0);
+            }
+
+            var mesh;
+            var mesh1;
+            var mesh2;
+            var mesh3;
+            var mesh4;
+            var sidemesh;
+            var sidemesh1;
+            var sidemesh2;
+            var sidemesh3;
+            var sidemesh4;
+            sidemesh=new THREE.Mesh(
+                new THREE.SphereGeometry(3,128,128),
+                new THREE.MeshLambertMaterial({color:0xFF69B4})
+            );
+            sidemesh.position.set(183,0,0);
+            sidemesh.castShadow=true;
+
+            sidemesh1=new THREE.Mesh(
+                new THREE.SphereGeometry(3,128,128),
+                new THREE.MeshLambertMaterial({color:0xffffff})
+            );
+            sidemesh1.position.set(243,0,30);
+            sidemesh1.castShadow=true;
+
+            sidemesh2=new THREE.Mesh(
+                new THREE.SphereGeometry(3,128,128),
+                new THREE.MeshLambertMaterial({color:0xffffff})
+            );
+            sidemesh2.position.set(243,-80,30);
+            sidemesh2.castShadow=true;
+
+            sidemesh3=new THREE.Mesh(
+                new THREE.SphereGeometry(3,128,128),
+                new THREE.MeshLambertMaterial({color:0xffffff})
+            );
+            sidemesh3.position.set(243,-80,-30);
+            sidemesh3.castShadow=true;
+
+            sidemesh4=new THREE.Mesh(
+                new THREE.SphereGeometry(3,128,128),
+                new THREE.MeshLambertMaterial({color:0xffffff})
+            );
+            sidemesh4.position.set(243,0,-30);
+            sidemesh4.castShadow=true;
+
+            function initObject() {
+                mesh=new THREE.Mesh(
+                    new THREE.SphereGeometry(3,128,128),
+                    new THREE.MeshLambertMaterial({color:0xFF69B4})
+                );
+                mesh.position.set(0,53,0);
+                mesh.castShadow=true;
+                scene.add( mesh );
+
+                mesh1=new THREE.Mesh(
+                    new THREE.SphereGeometry(3,128,128),
+                    new THREE.MeshLambertMaterial({color:0xffffff})
+                );
+                mesh1.position.set(-30, 83,-30);
+                mesh1.castShadow=true;
+                scene.add( mesh1 );
+
+                mesh2=new THREE.Mesh(
+                    new THREE.SphereGeometry(3,128,128),
+                    new THREE.MeshLambertMaterial({color:0xffffff})
+                );
+                mesh2.position.set(30, 83,-30);
+                mesh2.castShadow=true;
+                scene.add( mesh2 );
+
+                mesh3=new THREE.Mesh(
+                        new THREE.SphereGeometry(3,128,128),
+                        new THREE.MeshLambertMaterial({color:0xffffff})
+                );
+                mesh3.position.set(30,83,30);
+                mesh3.castShadow=true;
+                scene.add( mesh3);
+
+                mesh4=new THREE.Mesh(
+                        new THREE.SphereGeometry(3,128,128),
+                        new THREE.MeshLambertMaterial({color:0xffffff})
+                );
+                mesh4.position.set(-30,83,30);
+                mesh4.castShadow=true;
+                scene.add( mesh4 );
+            }
+
+            var axisHelper=new THREE.AxisHelper(1800);
+            scene.add(axisHelper);
+
+            var light;
+            var sidelight;
+            var lightAmb;
+            function initLight() {
+                light=new THREE.SpotLight(0xF8F8FF);
+                light.position.set(0,400,0);
+                light.castShadow=false;
+                light.shadowCameraFar=1000;
+                light.shadow.MapWidth=8000;
+                light.shadow.MapHeight=8000;
+                sidelight=new THREE.SpotLight(0xF8F8FF);
+                sidelight.position.set(400,0,0);
+                lightAmb=new THREE.AmbientLight(0xf8f8ff);
+               scene.add(light);
+               //scene.add(lightAmb)
+            }
+
+            var plane1;
+            var plane2;
+            var plane3;
+            var plane4;
+            var sideplane5;
+            var sideplane6;
+            var XRay1;
+            var XRay2;
+            var XRay3;
+            var XRay4;
+            var side_camera5;
+            var side_camera6;
+            var camera_Perspective1Helper;
+            var camera_Perspective2Helper;
+            var camera_Perspective3Helper;
+            var camera_Perspective4Helper;
+            var sidecamera5Helper;
+            var sidecamera6Helper;
+            var texture1 = new THREE.TextureLoader().load('dst1.png');
+            var texture2 = new THREE.TextureLoader().load('dst2.png');
+            var texture3 = new THREE.TextureLoader().load('dst3.png');
+            var texture4 = new THREE.TextureLoader().load('dst4.png');
+            var texture5 = new THREE.TextureLoader().load('side1.png');
+            var texture6 = new THREE.TextureLoader().load('side2.png');
+            function createUI() {
+               var addObjects = new function () {
+                   this.addPlane1 =function () {
+                           plane1=new THREE.Mesh(
+                           new THREE.CircleGeometry( 100, 128),
+                           new THREE.MeshBasicMaterial({map:texture1,side: THREE.DoubleSide})
+                       );
+                       plane1.position.set(-16.33,210.7,-5);//(16.33,-789.30,-3.66);
+                       plane1.rotation.set(1.58,0.06,0.09);
+                       scene.add(plane1);
+                   };
+                   this.addPlane2=function () {
+                       plane2=new THREE.Mesh(
+                           new THREE.CircleGeometry(100, 128),
+                           new THREE.MeshBasicMaterial({map:texture2,side:THREE.DoubleSide})
+                       );
+                       plane2.position.set(0,210,18);//(27.74,-790,2.95);
+                       plane2.rotation.set(1.55,0.06,-0.18);
+
+                       scene.add(plane2)
+                   };
+                   this.addPlane3=function () {
+                           plane3=new THREE.Mesh(
+                           new THREE.CircleGeometry( 100, 128),
+                           new THREE.MeshBasicMaterial({map:texture3,side: THREE.DoubleSide})
+                       );
+                       plane3.position.set(38,258,18);//(-276.57,-702.53,1.55);1009
+                       plane3.rotation.set(1.56,-0.29,0.16);
+
+                       scene.add(plane3);
+                   };
+                    this.addPlane4 = function () {
+                        var plane4geo = new THREE.CircleGeometry( 100, 128);
+                        var plane4mat = new THREE.MeshBasicMaterial({map: texture4,side: THREE.DoubleSide});
+                        plane4 = new THREE.Mesh(plane4geo, plane4mat);
+                        plane4.position.set(-40, 185, 20);//(153.45,-799.81,24.315);
+                        plane4.rotation.set(1.58,0.22,0.10);
+
+                        scene.add(plane4);
+                    };
+
+
+                    this.removePlane1=function () {
+                        scene.remove(plane1);
+                    };
+                    this.removePlane2=function () {
+                        scene.remove(plane2)
+                    };
+                   this.removePlane3=function () {
+                       scene.remove(plane3);
+                   };
+                   this.removePlane4=function () {
+                       scene.remove(plane4);
+                   };
+                   this.removePlane = function() {
+                       var allChildren = scene.children;
+                       var lastObject = allChildren[allChildren.length-1];
+                       if (lastObject instanceof THREE.Mesh) {
+                           scene.remove(lastObject);
+                       }
+                   };
+                };
+
+                var gui = new dat.GUI();
+                gui.add(addObjects,'addPlane1');
+                gui.add(addObjects,'addPlane2');
+                gui.add(addObjects,'addPlane3');
+                gui.add(addObjects,'addPlane4');
+                //gui.add(addObjects,'addPlane5');
+               // gui.add(addObjects,'addPlane6');
+                gui.add(addObjects,'removePlane1');
+                gui.add(addObjects,'removePlane2');
+                gui.add(addObjects,'removePlane3');
+                gui.add(addObjects,'removePlane4');
+                gui.add(addObjects,'removePlane');
+            }
+
+            function createUI2() {
+                var setXRay=new function () {
+                    this.setXRay1=function () {
+                        XRay1=new THREE.PerspectiveCamera(20,1,400,1000);
+                        XRay1.position.set(16.33,-789.30,-3.66);
+                        XRay1.rotation.set(1.58,0.06,0.09);
+                        camera_Perspective1Helper=new THREE.CameraHelper(XRay1);
+                        scene.add(XRay1);
+                        scene.add(camera_Perspective1Helper);
+                    };
+                    this.setXRay2=function () {
+                        XRay2=new THREE.PerspectiveCamera(20,1,400,1000);
+                        XRay2.position.set(27.74,-790,2.95);
+                        XRay2.rotation.set(1.55,0.06,-0.18);
+                        camera_Perspective2Helper=new THREE.CameraHelper(XRay2);
+                        scene.add(XRay2);
+                        scene.add(camera_Perspective2Helper);
+                    };
+                    this.setXRay3=function () {
+                        XRay3=new THREE.PerspectiveCamera(20,1,400,1000);
+                        XRay3.position.set(-276.57,-702.53,1.55);
+                        XRay3.rotation.set(1.56,-0.29,0.16);
+                        camera_Perspective3Helper=new THREE.CameraHelper(XRay3);
+                        scene.add(XRay3);
+                        scene.add(camera_Perspective3Helper);
+                    };
+                    this.setXRay4=function () {
+                        XRay4=new THREE.PerspectiveCamera(20,1,400,1000);
+                        XRay4.position.set(153.45,-799.81,24.315);
+                        XRay4.rotation.set(1.58,0.22,0.10);
+                        camera_Perspective4Helper=new THREE.CameraHelper(XRay4);
+                        scene.add(XRay4);
+                        scene.add(camera_Perspective4Helper)
+                    };
+
+                    this.removeXRay1=function () {
+                        scene.remove(XRay1);
+                        scene.remove(camera_Perspective1Helper)
+                    };
+                    this.removeXRay2=function () {
+                        scene.remove(XRay2);
+                        scene.remove(camera_Perspective2Helper)
+                    };
+                    this.removeXRay3=function () {
+                        scene.remove(XRay3);
+                        scene.remove(camera_Perspective3Helper)
+                    };
+                    this.removeXRay4=function () {
+                        scene.remove(XRay4);
+                        scene.remove(camera_Perspective4Helper);
+                    };
+                    this.removeXRay = function() {
+                        var allChildren = scene.children;
+                        var lastObject = allChildren[allChildren.length-1];
+                        var lastObject2=allChildren[allChildren.length-2];
+                        if(lastObject instanceof THREE.CameraHelper||lastObject instanceof THREE.PerspectiveCamera) {scene.remove(lastObject);scene.remove(lastObject2);}
+                        }
+                };
+
+                var gui = new dat.GUI();
+                gui.add(setXRay,'setXRay1');
+                gui.add(setXRay,'setXRay2');
+                gui.add(setXRay,'setXRay3');
+                gui.add(setXRay,'setXRay4');
+                //
+                gui.add(setXRay,'removeXRay1');
+                gui.add(setXRay,'removeXRay2');
+                gui.add(setXRay,'removeXRay3');
+                gui.add(setXRay,'removeXRay4');
+                gui.add(setXRay,'removeXRay');
+            }
+
+            function createUI3() {
+                var setSide=new function () {
+                    this.setSide1=function () {
+                        scene.remove(light);
+                        scene.remove(mesh);
+                        scene.remove(mesh1);
+                        scene.remove(mesh2);
+                        scene.remove(mesh3);
+                        scene.remove(mesh4);
+                        scene.add( sidemesh );
+                        scene.add( sidemesh1);
+                        scene.add( sidemesh2 );
+                        scene.add( sidemesh3);
+                        scene.add( sidemesh4 );
+                        scene.add(lightAmb)
+                    };
+                    this.setNormal=function () {
+                        scene.add(light);
+                        scene.add(mesh);
+                        scene.add(mesh1);
+                        scene.add(mesh2);
+                        scene.add(mesh3);
+                        scene.add(mesh4);
+                        scene.remove( sidemesh );
+                        scene.remove( sidemesh1);
+                        scene.remove( sidemesh2 );
+                        scene.remove( sidemesh3);
+                        scene.remove( sidemesh4 );
+                        scene.remove(lightAmb)
+                    }
+                    this.setSideCamera5=function(){
+                        side_camera5=new THREE.PerspectiveCamera(20,1,400,1000);
+                        side_camera5.position.set(-628.497,-52.68,9.49);
+                        side_camera5.rotation.set(1.88,-1.51,-0.28);
+                        sidecamera5Helper=new THREE.CameraHelper(side_camera5);
+                        scene.add(side_camera5);
+                        scene.add(sidecamera5Helper);
+                    };
+                    this.addPlane5 = function () {
+                        var plane5geo = new THREE.CircleGeometry( 100, 128);
+                        var plane5mat = new THREE.MeshLambertMaterial({map: texture5,side: THREE.DoubleSide});
+                        sideplane5 = new THREE.Mesh(plane5geo, plane5mat);
+                        sideplane5.position.set(370,-30,-5);//998
+                        sideplane5.rotation.set(1.88,-1.51,-0.28);
+                        sideplane5.rotateZ(37*3.14/180)
+                        scene.add(sideplane5);
+                    };
+
+
+                };
+                var gui3 = new dat.GUI();
+                gui3.add(setSide,'setSide1');
+                gui3.add(setSide,'setSideCamera5');
+                gui3.add(setSide,'addPlane5');
+                gui3.add(setSide,'setNormal')
+                }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                control.update();
+                render();
+                stats.update();
+            }
+
+            function render() {
+                renderer.clear();
+                renderer.setViewport(0,0,width,height);
+                renderer.render(scene,camera);
+            }
+
+            var control;
+            function initControl() {
+                control=new THREE.OrbitControls(camera,renderer.domElement);
+                control.enableDamping=true;
+                control.enableZoom=true;
+                control.autoRotate = false;
+                control.minDistance  = 100;
+                control.maxDistance  = 5000;
+                control.enablePan = true;
+                control.maxPolarAngle= 4*Math.PI;//上下两级可视区域最大角度
+                control.minPolarAngle=-4*Math.PI;///上下两极的可视区域最小角度
+                control.minAzimuthAngle = - Infinity;//水平方向视角限制
+                control.maxAzimuthAngle = Infinity; // 水平方向视角限制
+            }
+
+            function threestart() {
+                initThree();
+                initObject();
+                initCamera();
+                initLight();
+                initControl();
+                createUI();
+                createUI2();
+                createUI3();
+                animate();
+            }
+
+        </script>
+    </head>
+    <body onload="threestart();">
+        <div id="canvas-frame"></div>
+    </body>
+</html>
